@@ -1,0 +1,7 @@
+PUT http://localhost:3002/api/persons/68aadf5a2eccec94f9e7b402
+Content-Type: application/json
+
+{
+    "name": "Johnny Depp name updated",
+    "number": "34-343-344"
+}

@@ -1,9 +1,12 @@
-let { persons } = require('./data')
+
+require('dotenv').config()
 
 const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
-const { getRandomInteger, getRequestBodyMorgan } = require('./utils')
+const { getRequestBodyMorgan } = require('./utils')
+const Person = require('./models/person')
+const { errorHandler } = require('./middlewares')
 const app = express()
 
 app.use(cors())
@@ -23,68 +26,78 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
-    res.json(persons)
+    Person.find({})
+    .then((persons) => {
+        res.json(persons)
+    })
 })
 
 app.get('/api/persons/:id', (req, res) => { 
-    const id = req.params.id
-    const person = persons.find(person => person.id === id)
-    if (person) {
+    Person.findById(req.params.id)
+    .then((person) => {
         res.json(person)
-    } else {
+    })
+    .catch(() => {
         res.status(404).end()
-    }
+    })
 })
 
 app.get('/info', (req, res) => {
-    const date = new Date()
-    const response = `
-        <div>
-            <p>Phonebook has info for ${persons.length} people</p>
-            <p>${date}</p>
-        </div>
-    `
-    res.writeHead(200, { 'Content-Type': 'text/html' })
-    res.end(response)
+    Person.find({})
+    .then((persons) => {
+        const date = new Date()
+        const response = `
+            <div>
+                <p>Phonebook has info for ${persons.length} people</p>
+                <p>${date}</p>
+            </div>
+        `
+        res.writeHead(200, { 'Content-Type': 'text/html' })
+        res.end(response)
+    })
 })
 
 app.post('/api/persons', (req, res) => {
-    const newPerson = req.body
-
-    if(!newPerson.name) {
+    if(!req.body.name) {
         res.status(400).json({
             error: "Name is required."
         })
         return
     }
-    if(!newPerson.number) {
+    if(!req.body.number) {
         res.status(400).json({
             error: "Number is required."
         })
         return
     }
-
-    const hasDuplicate = persons.find((person) => {
-        return person.name.toLowerCase() === newPerson.name.toLowerCase()
+    const newPerson = new Person(req.body)
+    newPerson.save()
+    .then((person) => {
+        res.status(201).json(newPerson)
     })
+})
 
-    if(hasDuplicate) {
-        res.status(400).json({
-            error: "Name must be unique"
+app.delete('/api/persons/:id', (req, res, next) => {
+    Person.findByIdAndDelete(req.params.id)
+        .then((result) => {
+            res.status(204).end()
         })
-        return
-    }
-
-    newPerson.id = String(getRandomInteger())
-    persons = persons.concat(newPerson)
-    res.status(201).json(newPerson)
+        .catch((error) => {
+            next(error)
+        })
 })
 
-app.delete('/api/persons/:id', (req, res) => {
-    const deleteId = req.params.id
-    persons = persons.filter(person => person.id !== deleteId)
-    res.status(204).end()
+app.put('/api/persons/:id', (req, res, next) => {
+    Person.findByIdAndUpdate(req.params.id, req.body, { new: true })
+        .then((result) => {
+            res.status(200).json(result)
+        })
+        .catch((error) => {
+            next(error)
+        })
 })
+
+app.use(errorHandler)
 
 app.listen(PORT)
 

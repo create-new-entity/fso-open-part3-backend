@@ -12,6 +12,8 @@ app.use(express.json())
 morgan.token('requestBody', getRequestBodyMorgan)
 app.use(morgan(':method :url :status :response-time :requestBody'))
 
+app.use(express.static('dist'))
+
 const PORT = 3002
 
 

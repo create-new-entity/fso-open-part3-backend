@@ -2,15 +2,17 @@ let { persons } = require('./data')
 
 const express = require('express')
 const morgan = require('morgan')
+const cors = require('cors')
 const { getRandomInteger, getRequestBodyMorgan } = require('./utils')
 const app = express()
 
+app.use(cors())
 app.use(express.json())
 
 morgan.token('requestBody', getRequestBodyMorgan)
 app.use(morgan(':method :url :status :response-time :requestBody'))
 
-const PORT = 3001
+const PORT = 3002
 
 
 app.get('/', (req, res) => {

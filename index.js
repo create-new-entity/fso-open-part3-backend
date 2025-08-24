@@ -27,62 +27,62 @@ app.get('/', (req, res) => {
 
 app.get('/api/persons', (req, res) => {
     Person.find({})
-    .then((persons) => {
-        res.json(persons)
-    })
+        .then((persons) => {
+            res.json(persons)
+        })
 })
 
-app.get('/api/persons/:id', (req, res) => { 
+app.get('/api/persons/:id', (req, res) => {
     Person.findById(req.params.id)
-    .then((person) => {
-        res.json(person)
-    })
-    .catch(() => {
-        res.status(404).end()
-    })
+        .then((person) => {
+            res.json(person)
+        })
+        .catch(() => {
+            res.status(404).end()
+        })
 })
 
 app.get('/info', (req, res) => {
     Person.find({})
-    .then((persons) => {
-        const date = new Date()
-        const response = `
-            <div>
-                <p>Phonebook has info for ${persons.length} people</p>
-                <p>${date}</p>
-            </div>
-        `
-        res.writeHead(200, { 'Content-Type': 'text/html' })
-        res.end(response)
-    })
+        .then((persons) => {
+            const date = new Date()
+            const response = `
+                <div>
+                    <p>Phonebook has info for ${persons.length} people</p>
+                    <p>${date}</p>
+                </div>
+            `
+            res.writeHead(200, { 'Content-Type': 'text/html' })
+            res.end(response)
+        })
 })
 
 app.post('/api/persons', (req, res, next) => {
     if(!req.body.name) {
         res.status(400).json({
-            error: "Name is required."
+            error: 'Name is required.'
         })
         return
     }
     if(!req.body.number) {
         res.status(400).json({
-            error: "Number is required."
+            error: 'Number is required.'
         })
         return
     }
     const newPerson = new Person(req.body)
     newPerson.save()
-    .then((person) => {
-        res.status(201).json(newPerson)
-    })
-    .catch((error) => {
-        next(error)
-    })
+        .then(() => {
+            res.status(201).json(newPerson)
+        })
+        .catch((error) => {
+            next(error)
+        })
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
     Person.findByIdAndDelete(req.params.id)
-        .then((result) => {
+        .then(() => {
             res.status(204).end()
         })
         .catch((error) => {

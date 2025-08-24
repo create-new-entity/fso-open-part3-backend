@@ -1,5 +1,5 @@
 
-function getRequestBodyMorgan(req, res) {
+function getRequestBodyMorgan(req) {
     return JSON.stringify(req.body)
 }
 

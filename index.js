@@ -75,7 +75,7 @@ app.post('/api/persons', (req, res) => {
         return
     }
 
-    newPerson.id = getRandomInteger()
+    newPerson.id = String(getRandomInteger())
     persons = persons.concat(newPerson)
     res.status(201).json(newPerson)
 })

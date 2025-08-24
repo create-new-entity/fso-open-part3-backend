@@ -57,7 +57,7 @@ app.get('/info', (req, res) => {
     })
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
     if(!req.body.name) {
         res.status(400).json({
             error: "Name is required."
@@ -75,6 +75,9 @@ app.post('/api/persons', (req, res) => {
     .then((person) => {
         res.status(201).json(newPerson)
     })
+    .catch((error) => {
+        next(error)
+    })
 })
 
 app.delete('/api/persons/:id', (req, res, next) => {
@@ -88,7 +91,7 @@ app.delete('/api/persons/:id', (req, res, next) => {
 })
 
 app.put('/api/persons/:id', (req, res, next) => {
-    Person.findByIdAndUpdate(req.params.id, req.body, { new: true })
+    Person.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
         .then((result) => {
             res.status(200).json(result)
         })

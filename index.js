@@ -26,6 +26,7 @@ app.get('/', (req, res) => {
 })
 
 app.get('/api/persons', (req, res) => {
+    // 3.13
     Person.find({})
         .then((persons) => {
             res.json(persons)
@@ -58,6 +59,7 @@ app.get('/info', (req, res) => {
 })
 
 app.post('/api/persons', (req, res, next) => {
+    // 3.14
     if(!req.body.name) {
         res.status(400).json({
             error: 'Name is required.'

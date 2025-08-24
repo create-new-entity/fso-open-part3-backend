@@ -59,7 +59,6 @@ app.get('/info', (req, res) => {
 })
 
 app.post('/api/persons', (req, res, next) => {
-    // 3.14
     if(!req.body.name) {
         res.status(400).json({
             error: 'Name is required.'
@@ -73,7 +72,7 @@ app.post('/api/persons', (req, res, next) => {
         return
     }
     const newPerson = new Person(req.body)
-    newPerson.save()
+    newPerson.save() // 3.14
         .then(() => {
             res.status(201).json(newPerson)
         })

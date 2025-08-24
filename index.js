@@ -87,3 +87,5 @@ app.delete('/api/persons/:id', (req, res) => {
 app.listen(PORT)
 
 console.log(`Server running on port ${PORT}`)
+
+// Deployed here: https://fso-open-part3-backend.onrender.com/
